@@ -1,0 +1,36 @@
+#!/bin/bash
+
+echo "🔵 Z-CORE MODULE GENERATOR"
+echo "---------------------------"
+
+create_module() {
+    NAME=$1
+    echo "📦 Creazione modulo $NAME..."
+
+    mkdir -p "$NAME/src"
+
+    cat > "$NAME/Cargo.toml" <<EOF
+[package]
+name = "zcore-$NAME"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+EOF
+
+    cat > "$NAME/src/lib.rs" <<EOF
+pub fn init() {
+    println!("Modulo $NAME inizializzato!");
+}
+EOF
+
+    echo "✅ Modulo $NAME creato"
+}
+
+create_module "A"
+create_module "B"
+create_module "C"
+create_module "D"
+
+echo ""
+echo "🎉 Tutti i moduli sono stati generati!"

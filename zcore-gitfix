@@ -1,0 +1,20 @@
+#!/bin/bash
+
+clear
+echo "🔵 Z‑CORE GIT FIX"
+echo "------------------"
+
+echo "🧹 Pulizia indice Git..."
+git rm -r --cached . >/dev/null 2>&1
+
+echo "📦 Aggiunta di TUTTI i file..."
+git add -A
+
+echo "📝 Creazione commit..."
+git commit -m 'Z-CORE FULL SYNC: add modules A/B/C/D + scripts' || echo "⚠️ Nessun cambiamento da committare"
+
+echo "🚀 Upload forzato su GitHub..."
+git push -u origin main --force
+
+echo ""
+echo "🎉 Tutto è stato riallineato e caricato online!"

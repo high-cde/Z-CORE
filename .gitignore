@@ -1,0 +1,13 @@
+# Ignora solo la cartella di build Rust
+target/
+
+# Ignora file temporanei
+*.log
+*.tmp
+*.swp
+
+# NON ignorare i moduli
+!A/
+!B/
+!C/
+!D/

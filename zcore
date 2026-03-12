@@ -1,0 +1,89 @@
+#!/bin/bash
+
+# ==========================================
+# 🔵 Z‑CORE BUILD SYSTEM — PRO+ EDITION
+# ==========================================
+
+clear
+
+# --- COLORI ---
+GREEN="\e[32m"
+RED="\e[31m"
+YELLOW="\e[33m"
+BLUE="\e[34m"
+CYAN="\e[36m"
+RESET="\e[0m"
+
+# --- LOG DIRECTORY ---
+mkdir -p logs
+LOGFILE="logs/build-$(date +%Y%m%d-%H%M%S).log"
+
+echo -e "${BLUE}🔵 Z‑CORE BUILD SYSTEM — PRO+ EDITION${RESET}"
+echo "---------------------------------------------"
+echo -e "🚀 Avvio compilazione completa...\n"
+
+modules=("A" "B" "C" "D")
+
+start_time=$(date +%s)
+
+progress_bar() {
+    local duration=$1
+    local bar="▰▰▰▰▰▰▰▰▰▰"
+    local empty="□□□□□□□□□□"
+
+    for i in {1..10}; do
+        sleep $((duration / 10))
+        echo -ne "${CYAN}[${bar:0:i}${empty:i}]${RESET}\r"
+    done
+    echo ""
+}
+
+build_module() {
+    local m=$1
+    local path="./$m"
+
+    echo -e "${YELLOW}▶️  Compilazione modulo $m...${RESET}"
+
+    if [ -d "$path" ]; then
+        module_start=$(date +%s)
+
+        cargo build --release --manifest-path "$path/Cargo.toml" >> "$LOGFILE" 2>&1
+        status=$?
+
+        module_end=$(date +%s)
+        module_time=$((module_end - module_start))
+
+        progress_bar 1
+
+        if [ $status -eq 0 ]; then
+            echo -e "${GREEN}✅ Modulo $m compilato (${module_time}s)${RESET}"
+        else
+            echo -e "${RED}❌ Errore nella compilazione del modulo $m${RESET}"
+        fi
+    else
+        echo -e "${RED}⚠️ Modulo $m non trovato ($path)${RESET}"
+    fi
+
+    echo ""
+}
+
+# --- BUILD PARALLELO ---
+pids=()
+
+for m in "${modules[@]}"; do
+    build_module "$m" &
+    pids+=($!)
+done
+
+# --- ATTESA COMPLETAMENTO ---
+for pid in "${pids[@]}"; do
+    wait $pid
+done
+
+end_time=$(date +%s)
+total_time=$((end_time - start_time))
+
+echo -e "${GREEN}🎉 COMPILAZIONE COMPLETATA in ${total_time}s!${RESET}"
+echo -e "📄 Log salvato in: ${CYAN}$LOGFILE${RESET}"
+echo -e "\a"
+echo ""
